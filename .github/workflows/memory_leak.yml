@@ -1,0 +1,123 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Memory Leak Detection
+
+# Controls when the workflow will run
+on:
+  workflow_call:
+    inputs:
+      AIO_API_URL:
+        required: true
+        type: string
+      AIO_SITE:
+        required: true
+        type: string
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  PM2_APP_NAME: nuxt
+  
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  memory-leak-detection:
+    # The type of runner that the job will run on
+    runs-on: ['self-hosted', 'node']
+    # Node.js matrix
+    strategy:
+      matrix:
+        node: [14, 16]
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checkout branch
+      - name: Checkout branch
+        uses: actions/checkout@v3
+      # Use node.js matrix
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      # Install dependencies
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      # Create env
+      - name: Create .env file
+        run: echo "AIO_API_URL=${{ inputs.AIO_API_URL }}\nAIO_SITE=${{ inputs.AIO_SITE }}" > .env
+      # Build application
+      - name: Install dependencies
+        run: yarn build
+      # Start application
+      - name: Start application
+        run: pm2 start ecosystem.config.js
+      # Warm Up
+      - name: Warm Up
+        run: siege -c 1 -t 1s http://localhost:5000/
+      # Get current memory usage
+      - name: Get current memory
+        run: pm2 list | grep ${PM2_APP_NAME} | awk '{print $8}' | sed 's/MiB//g'
+        id: initial_memory
+        shell: bash
+      # Run siege
+      - name: Run siege
+        run: siege -c 10 -t 5s http://localhost:5000/
+      # Get current memory usage
+      - name: Get current memory
+        run: pm2 list | grep ${PM2_APP_NAME} | awk '{print $8}' | sed 's/MiB//g'
+        id: run1
+        shell: bash
+      # Run siege
+      - name: Run siege
+        run: siege -c 10 -t 5s http://localhost:5000/
+      # Get current memory usage
+      - name: Get current memory
+        run: pm2 list | grep ${PM2_APP_NAME} | awk '{print $8}' | sed 's/MiB//g'
+        id: run2
+        shell: bash
+      # Run siege
+      - name: Run siege
+        run: siege -c 10 -t 5s http://localhost:5000/
+      # Get current memory usage
+      - name: Get current memory
+        run: pm2 list | grep ${PM2_APP_NAME} | awk '{print $8}' | sed 's/MiB//g'
+        id: run3
+        shell: bash
+      # Run siege
+      - name: Run siege
+        run: siege -c 10 -t 5s http://localhost:5000/
+      # Get current memory usage
+      - name: Get current memory
+        run: pm2 list | grep ${PM2_APP_NAME} | awk '{print $8}' | sed 's/MiB//g'
+        id: run4
+        shell: bash
+      # Run siege
+      - name: Run siege
+        run: siege -c 10 -t 5s http://localhost:5000/
+      # Get current memory usage
+      - name: Get current memory
+        run: pm2 list | grep ${PM2_APP_NAME} | awk '{print $8}' | sed 's/MiB//g'
+        id: run5
+        shell: bash
+      # Run siege
+      - name: Run siege
+        run: siege -c 10 -t 5s http://localhost:5000/
+      # Get current memory usage
+      - name: Get current memory
+        run: pm2 list | grep $PM2_APP_NAME | awk '{print $10}'
+        id: end_memory
+        shell: bash
+      - name: Get Memory Difference
+        run: |
+          end=$(cat ${{ steps.end_memory.outputs.stdout }} | awk '{print $1}')
+          start=$(cat ${{ steps.initial_memory.outputs.stdout }} | awk '{print $1}')
+          memory_diff=$(echo "$end - $start" | bc)
+          threshold=$(echo "$start * 0.05" | bc)
+          echo "::set-output name=memory_diff::$memory_diff"
+          echo "::set-output name=threshold::$threshold"
+        id: memory_difference
+      # Check if memory leak
+      - name: Memory difference
+        if: steps.memory_difference.outputs.memory_diff > steps.memory_difference.outputs.threshold
+        run: |
+          echo "Memory leak detected: $(steps.memory_difference.outputs.memory_diff) increased"
