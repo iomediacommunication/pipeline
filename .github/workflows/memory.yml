@@ -1,0 +1,240 @@
+name: Memory Leak Detection
+
+# Controls when the workflow will run
+on:
+  workflow_call:
+    inputs:
+      ENV:
+        required: true
+        type: string
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  PM2_APP_NAME: nuxt
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  memory-leak-detection:
+    # The type of runner that the job will run on
+    runs-on: ['self-hosted', 'node']
+    # Node.js matrix
+    strategy:
+      matrix:
+        node: [14, 16]
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checkout branch
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      # Use node.js matrix
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      # Use cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles('**/yarn.lock') }}
+      # Install dependencies
+      - name: Install dependencies
+        run: yarn install
+      # Create env
+      - name: Create .env file
+        run: echo -e "${{ inputs.ENV }}" > .env
+      # Build application
+      - name: Install dependencies
+        run: yarn build
+      # Start application
+      - name: Start application
+        run: pm2 start ecosystem.config.js
+      # Wait port
+      - name: Check HTTP status
+        uses: gerdemann/http-status-code@1.0.0
+        with:
+          url: http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "start=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: start
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 50 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run1=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run1
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 25 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run2=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run2
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 50 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run3=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run3
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 25 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run4=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run4
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 50 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run5=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run5
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 25 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run6=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run6
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 50 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run7=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run7
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 25 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run8=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run8
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 50 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run9=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run9
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 25 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "run10=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: run10
+        shell: bash
+      # Simulate traffic
+      - name: Traffic
+        run: siege -c 50 -t 30s http://127.0.0.1:5000/
+      # Wait
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      # Get current memory usage
+      - name: Get current memory
+        run: echo "end=$(pm2 list | grep nuxt | awk '{print $22}' | sed -E 's/mb|MiB|g//g')" >> $GITHUB_OUTPUT
+        id: end
+        shell: bash
+      - name: Calculate memory diff
+        run: |
+          start=${{ steps.start.outputs.start }}
+          end=${{ steps.end.outputs.end }}
+          memory_diff=$(echo "$end - $start" | bc)
+          threshold=$(echo "$start + ($start * 0.25)" | bc)
+          echo "memory_diff=$memory_diff" >> $GITHUB_OUTPUT
+          echo "threshold=$threshold" >> $GITHUB_OUTPUT
+        id: memory_difference
+      # Memory run results
+      - name: Memory Runs Results
+        uses: peter-evans/commit-comment@v2
+        with:
+          body: |
+            ### :fire: Memory Detection Result
+            **Results :**
+            | # RUN  | USERS | TIME | MEMORY |
+            | ------------- | ------------- |
+            | START  | IDLE | 30s | ${{ steps.start.outputs.start }} MB  |
+            | RUN1  | 50 | 30s | ${{ steps.run1.outputs.run1 }} MB  |
+            | RUN2  | 25 | 30s | ${{ steps.run2.outputs.run2 }} MB  |
+            | RUN3  | 50 | 30s | ${{ steps.run3.outputs.run3 }} MB  |
+            | RUN4  | 25 | 30s | ${{ steps.run4.outputs.run4 }} MB  |
+            | RUN5  | 50 | 30s | ${{ steps.run5.outputs.run5 }} MB  |
+            | RUN6  | 25 | 30s | ${{ steps.run6.outputs.run6 }} MB  |
+            | RUN7  | 50 | 30s | ${{ steps.run7.outputs.run7 }} MB  |
+            | RUN8  | 25 | 30s | ${{ steps.run8.outputs.run8 }} MB  |
+            | RUN9  | 50 | 30s | ${{ steps.run9.outputs.run9 }} MB  |
+            | RUN10  | 25 | 30s | ${{ steps.run10.outputs.run10 }} MB  |
+            | END  | 50 | 30s | ${{ steps.end.outputs.end }} MB  |
+      # Stop application
+      - name: Stop application
+        run: pm2 stop ecosystem.config.js
+      # Delete application
+      - name: End application
+        run: pm2 delete ecosystem.config.js
+      # Flush logs
+      - name: Flush logs
+        run: pm2 flush
