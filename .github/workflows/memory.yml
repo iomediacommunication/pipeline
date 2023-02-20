@@ -216,7 +216,7 @@ jobs:
             ### :fire: Memory Detection Result
             **Results :**
             | # RUN  | USERS | TIME | MEMORY |
-            | ------------- | ------------- |
+            | ------------- | ------------- | ------------- | ------------- |
             | START  | IDLE | 30s | ${{ steps.start.outputs.start }} MB  |
             | RUN1  | 50 | 30s | ${{ steps.run1.outputs.run1 }} MB  |
             | RUN2  | 25 | 30s | ${{ steps.run2.outputs.run2 }} MB  |
