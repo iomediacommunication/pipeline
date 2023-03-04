@@ -28,7 +28,7 @@ jobs:
         path: node_modules
         key: ${{ runner.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles('**/yarn.lock') }}
     - name: Install dependencies
-      run: yarn install --frozen-lockfile --prefer-offline
+      run: yarn install --prefer-offline
     - name: Playwright
       run: npx playwright install
     - name: Tests
