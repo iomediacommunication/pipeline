@@ -215,7 +215,14 @@ jobs:
         run: chmod +x $PWD/memory.js
       - name: Execute script
         id: script
-        run: node $PWD/memory.js --runs=[${{ steps.start.outputs.start }},${{ steps.run1.outputs.run1 }},${{ steps.run2.outputs.run2 }},${{ steps.run3.outputs.run3 }},${{ steps.run4.outputs.run4 }},${{ steps.run5.outputs.run5 }},${{ steps.run6.outputs.run6 }},${{ steps.run7.outputs.run7 }},${{ steps.run8.outputs.run8 }},${{ steps.run9.outputs.run9 }},${{ steps.run10.outputs.run10 }},${{ steps.end.outputs.end }}]
+        run: |
+          SCRIPT_OUTPUT=$(node $PWD/memory.js --runs=[${{ steps.start.outputs.start }},${{ steps.run1.outputs.run1 }},${{ steps.run2.outputs.run2 }},${{ steps.run3.outputs.run3 }},${{ steps.run4.outputs.run4 }},${{ steps.run5.outputs.run5 }},${{ steps.run6.outputs.run6 }},${{ steps.run7.outputs.run7 }},${{ steps.run8.outputs.run8 }},${{ steps.run9.outputs.run9 }},${{ steps.run10.outputs.run10 }},${{ steps.end.outputs.end }}])
+          IFS=';' read -r SCRIPT_SLOPE SCRIPT_STD_ERROR SCRIPT_T_VALUE SCRIPT_P_VALUE SCRIPT_LEAK <<< "$SCRIPT_OUTPUT"
+          echo "slope=$SCRIPT_SLOPE" >> $GITHUB_OUTPUT
+          echo "stdError=$SCRIPT_STD_ERROR" >> $GITHUB_OUTPUT
+          echo "tValue=$SCRIPT_T_VALUE" >> $GITHUB_OUTPUT
+          echo "pValue=$SCRIPT_P_VALUE" >> $GITHUB_OUTPUT
+          echo "isLeak=$SCRIPT_LEAK" >> $GITHUB_OUTPUT
       # Memory run results
       - name: Memory Runs Results
         uses: peter-evans/commit-comment@v2
@@ -238,7 +245,16 @@ jobs:
             | RUN10  | 25 | 30s | ${{ steps.run10.outputs.run10 }} MB  |
             | END  | 50 | 30s | ${{ steps.end.outputs.end }} MB  |
             
-            ${{ steps.script.stdout }}
+            **Distribution analysis :**
+            
+            | KEY | VALUE |
+            | ------------- | ------------- |
+            | SLOPE | ${{ steps.script.outputs.slope }} |
+            | STD ERROR | ${{ steps.script.outputs.stdError }} |
+            | T VALUE | ${{ steps.script.outputs.tValue }} |
+            | P VALUE | ${{ steps.script.outputs.pValue }} |
+            | POTENTIAL LEAK | ${{ steps.script.outputs.isLeak }} |
+
       # Stop application
       - name: Stop application
         run: pm2 stop ecosystem.config.js

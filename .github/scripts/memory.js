@@ -138,13 +138,15 @@ const stdError = Math.sqrt(sumResiduals / dF);
 const significance = slope / (stdError / Math.sqrt(sumTT - sumT * sumM / n));
 const p = 2 * (1 - tDistribution(Math.abs(significance), dF));
 
-console.log(`slope : ${slope.toFixed(2)}`);
-console.log(`standard error of the estimate : ${stdError.toFixed(2)}`);
-console.log(`t-value : ${significance.toFixed(2)}`);
-console.log(`p-value : ${p.toFixed(4)}`);
-console.log(`significant at p < 0.05 ? : ${p < 0.05}`);
+console.log(`${slope.toFixed(2)};${stdError.toFixed(2)};${significance.toFixed(2)};${p.toFixed(4)};${p < 0.05}`);
 
-if (p < 0.05) {
-    console.error('slope is significant at the 0.05 level');
-    process.exit(1);
-}
+// console.log(`slope : ${slope.toFixed(2)}`);
+// console.log(`standard error of the estimate : ${stdError.toFixed(2)}`);
+// console.log(`t-value : ${significance.toFixed(2)}`);
+// console.log(`p-value : ${p.toFixed(4)}`);
+// console.log(`significant at p < 0.05 ? : ${p < 0.05}`);
+//
+// if (p < 0.05) {
+//     console.error('slope is significant at the 0.05 level');
+//     process.exit(1);
+// }
