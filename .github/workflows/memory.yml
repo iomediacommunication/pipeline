@@ -208,6 +208,14 @@ jobs:
           echo "memory_diff=$memory_diff" >> $GITHUB_OUTPUT
           echo "threshold=$threshold" >> $GITHUB_OUTPUT
         id: memory_difference
+      # Download the script
+      - name: Download script
+        run: wget $PWD/memory.js https://raw.githubusercontent.com/iomediacommunication/pipeline/main/.github/scripts/memory.js
+      - name: Give script permissions
+        run: chmod +x $PWD/memory.js
+      - name: Execute script
+        id: script
+        run: node $PWD/memory.js --runs=[${{ steps.start.outputs.start }},${{ steps.run1.outputs.run1 }},${{ steps.run2.outputs.run2 }},${{ steps.run3.outputs.run3 }},${{ steps.run4.outputs.run4 }},${{ steps.run5.outputs.run5 }},${{ steps.run6.outputs.run6 }},${{ steps.run7.outputs.run7 }},${{ steps.run8.outputs.run8 }},${{ steps.run9.outputs.run9 }},${{ steps.run10.outputs.run10 }},${{ steps.end.outputs.end }}]
       # Memory run results
       - name: Memory Runs Results
         uses: peter-evans/commit-comment@v2
@@ -229,6 +237,8 @@ jobs:
             | RUN9  | 50 | 30s | ${{ steps.run9.outputs.run9 }} MB  |
             | RUN10  | 25 | 30s | ${{ steps.run10.outputs.run10 }} MB  |
             | END  | 50 | 30s | ${{ steps.end.outputs.end }} MB  |
+            
+            ${{ steps.script.stdout }}
       # Stop application
       - name: Stop application
         run: pm2 stop ecosystem.config.js

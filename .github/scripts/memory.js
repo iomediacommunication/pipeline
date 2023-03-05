@@ -142,7 +142,7 @@ console.log(`slope : ${slope.toFixed(2)}`);
 console.log(`standard error of the estimate : ${stdError.toFixed(2)}`);
 console.log(`t-value : ${significance.toFixed(2)}`);
 console.log(`p-value : ${p.toFixed(4)}`);
-console.log(`significant at p < 0.05 ? ${p < 0.05}`);
+console.log(`significant at p < 0.05 ? : ${p < 0.05}`);
 
 if (p < 0.05) {
     console.error('slope is significant at the 0.05 level');
