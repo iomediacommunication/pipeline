@@ -210,7 +210,7 @@ jobs:
         id: memory_difference
       # Download the script
       - name: Download script
-        run: wget $PWD/memory.js https://raw.githubusercontent.com/iomediacommunication/pipeline/main/.github/scripts/memory.js
+        run: curl -o $PWD/memory.js https://raw.githubusercontent.com/iomediacommunication/pipeline/main/.github/scripts/memory.js
       - name: Give script permissions
         run: chmod +x $PWD/memory.js
       - name: Execute script
