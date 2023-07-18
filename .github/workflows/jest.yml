@@ -19,7 +19,7 @@ jobs:
     - name: Checkout branch
       uses: actions/checkout@v3
       with:
-          persist-credentials: false
+        registry-url: 'https://npm.pkg.github.com'
     - name: Use Node.js ${{ matrix.node }}
       uses: actions/setup-node@v3
       with:
