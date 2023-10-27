@@ -45,12 +45,17 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
+      - if: ${{ inputs.manager == 'pnpm' }}
+        name: Use package manager
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
       # Use cache node_modules
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(inputs.manager == 'pnpm' && '**/pnpm-lock.yaml' || '**/yarn.lock') }}
       # Install dependencies
       - name: Install dependencies
         run: ${{ inputs.manager }} install
