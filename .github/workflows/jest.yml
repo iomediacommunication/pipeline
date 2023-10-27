@@ -5,16 +5,27 @@ name: Jest
 # Controls when the workflow will run
 on:
   workflow_call:
+    inputs:
+      versions:
+        description: 'Node versions'
+        type: string
+        required: false
+        default: "[14, 16]"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
+    inputs:
+      versions:
+        description: 'Node versions'
+        type: string
+        required: false
+        default: "[14, 16]"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     runs-on: ['self-hosted', 'node']
     strategy:
       matrix:
-        node: [14, 16]
+        node: ${{ fromJSON(inputs.versions) }}
     steps:
     - name: Checkout branch
       uses: actions/checkout@v3
