@@ -16,6 +16,10 @@ on:
         type: string
         required: false
         default: "yarn"
+      key:
+        description: "Private key"
+        type: string
+        required: true
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
@@ -45,6 +49,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node }}
+    - name: 'Ssh agent'
+      uses: webfactory/ssh-agent@v0.4.1
+      with:
+        ssh-private-key: ${{ inputs.key }}
     - if: ${{ inputs.manager == 'pnpm' }}
       name: Use package manager
       uses: pnpm/action-setup@v2
