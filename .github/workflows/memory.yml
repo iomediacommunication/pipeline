@@ -7,6 +7,16 @@ on:
       ENV:
         required: true
         type: string
+      versions:
+        description: 'Node versions'
+        type: string
+        required: false
+        default: "[14, 16]"
+      manager:
+        description: "Package manager"
+        type: string
+        required: false
+        default: "yarn"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -22,7 +32,7 @@ jobs:
     # Node.js matrix
     strategy:
       matrix:
-        node: [14, 16]
+        node: ${{ fromJSON(inputs.versions) }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checkout branch
@@ -43,13 +53,13 @@ jobs:
           key: ${{ runner.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles('**/yarn.lock') }}
       # Install dependencies
       - name: Install dependencies
-        run: yarn install
+        run: ${{ inputs.manager }} install
       # Create env
       - name: Create .env file
         run: echo -e "${{ inputs.ENV }}" > .env
       # Build application
       - name: Install dependencies
-        run: yarn build
+        run: ${{ inputs.manager }} build
       # Start application
       - name: Start application
         run: pm2 start ecosystem.config.js --only nuxt
