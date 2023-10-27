@@ -45,10 +45,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node }}
-    - name: 'Ssh agent'
-      uses: webfactory/ssh-agent@v0.4.1
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - if: ${{ inputs.manager == 'pnpm' }}
       name: Use package manager
       uses: pnpm/action-setup@v2
