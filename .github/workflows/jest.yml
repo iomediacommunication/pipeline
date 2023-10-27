@@ -16,10 +16,6 @@ on:
         type: string
         required: false
         default: "yarn"
-    secrets:
-      key:
-        description: "Private key"
-        required: false
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
@@ -49,8 +45,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node }}
-    - if: ${{ secrets.key != '' }}
-      name: 'Ssh agent'
+    - name: 'Ssh agent'
       uses: webfactory/ssh-agent@v0.4.1
       with:
         ssh-private-key: ${{ inputs.key }}
