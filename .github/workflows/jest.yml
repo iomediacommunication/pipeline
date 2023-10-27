@@ -48,7 +48,7 @@ jobs:
     - name: 'Ssh agent'
       uses: webfactory/ssh-agent@v0.4.1
       with:
-        ssh-private-key: ${{ inputs.key }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - if: ${{ inputs.manager == 'pnpm' }}
       name: Use package manager
       uses: pnpm/action-setup@v2
