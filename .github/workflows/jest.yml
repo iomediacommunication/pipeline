@@ -24,6 +24,11 @@ on:
         type: string
         required: false
         default: "[14, 16]"
+      manager:
+        description: "Package manager"
+        type: string
+        required: false
+        default: "yarn"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
