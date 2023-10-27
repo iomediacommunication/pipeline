@@ -11,6 +11,11 @@ on:
         type: string
         required: false
         default: "[14, 16]"
+      manager:
+        description: "Package manager"
+        type: string
+        required: false
+        default: "yarn"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
@@ -41,10 +46,10 @@ jobs:
         path: node_modules
         key: ${{ runner.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles('**/yarn.lock') }}
     - name: Install dependencies
-      run: yarn install
+      run: ${{ inputs.manager }} install
     - name: Playwright
       run: npx playwright install
     - name: Tests
-      run: yarn test
+      run: ${{ inputs.manager }} test
     - name: Jest Coverage Comment
       uses: MishaKav/jest-coverage-comment@main
