@@ -19,6 +19,13 @@ jobs:
   performance:
     # The type of runner that the job will run on
     runs-on: ['self-hosted', 'node']
+    strategy:
+      matrix:
+        node: [16]
     steps:
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
       - name: Install unlighthouse
         run: npx unlighthouse --site ${{ inputs.site }}
