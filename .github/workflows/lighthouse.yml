@@ -29,5 +29,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install lighthouse
         run: npm install -g @unlighthouse/cli puppeteer
+      - uses: browser-actions/setup-chrome@v1
+      - run: chrome --version
       - name: Run lighthouse
         run: unlighthouse-ci --site ${{ inputs.site }} --reporter jsonExpanded
