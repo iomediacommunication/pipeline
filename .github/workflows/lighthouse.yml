@@ -31,5 +31,6 @@ jobs:
         run: npm install -g @unlighthouse/cli puppeteer
       - uses: browser-actions/setup-chrome@v1
       - run: chrome --version
+      - run: export CHROME_PATH=$(which chrome)
       - name: Run lighthouse
         run: unlighthouse-ci --site ${{ inputs.site }} --reporter jsonExpanded
