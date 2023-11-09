@@ -32,6 +32,5 @@ jobs:
       - uses: browser-actions/setup-chrome@v1
       - run: chrome --version
       - run: which chrome
-      - run: export CHROME_PATH=$(which chrome)
       - name: Run lighthouse
-        run: unlighthouse-ci --site ${{ inputs.site }} --reporter jsonExpanded
+        run: export CHROME_PATH=/home/ubuntu/actions-runner/_work/_tool/chromium/latest/x64/chrome && unlighthouse-ci --site ${{ inputs.site }} --reporter jsonExpanded
