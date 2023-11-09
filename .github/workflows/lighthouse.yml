@@ -27,5 +27,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - name: Install unlighthouse
-        run: npx unlighthouse --site ${{ inputs.site }}
+      - name: Install lighthouse
+        run: npm install -g @unlighthouse/cli puppeteer
+      - name: Run lighthouse
+        run: unlighthouse-ci --site ${{ inputs.site }} --reporter jsonExpanded
