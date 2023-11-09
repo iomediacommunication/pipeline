@@ -1,0 +1,24 @@
+name: Lighthouse
+
+# Controls when the workflow will run
+on:
+  workflow_call:
+    inputs:
+      site:
+        required: true
+        type: string
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+      inputs:
+        site:
+          required: true
+          type: string
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  performance:
+    # The type of runner that the job will run on
+    runs-on: ['self-hosted', 'node']
+    steps:
+      - name: Install unlighthouse
+        run: npx unlighthouse --site ${{ inputs.site }}
