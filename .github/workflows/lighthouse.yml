@@ -33,8 +33,9 @@ jobs:
       - run: chrome --version
       - run: which chrome
       - name: Run lighthouse
-        run: export CHROME_PATH=/home/ubuntu/actions-runner/_work/_tool/chromium/latest/x64/chrome && unlighthouse-ci --site ${{ inputs.site }} --reporter jsonExpanded
+        run: export CHROME_PATH=/home/ubuntu/actions-runner/_work/_tool/chromium/latest/x64/chrome && unlighthouse-ci --site ${{ inputs.site }} --build-static
       - uses: actions/upload-artifact@v3
         with:
           name: result
-          path: ./.unlighthouse/ci-result.json
+          # path: ./.unlighthouse/ci-result.json
+          path: ./.unlighthouse
