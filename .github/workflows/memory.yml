@@ -84,7 +84,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 50 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 50 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -96,7 +96,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 25 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 25 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -108,7 +108,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 50 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 50 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -120,7 +120,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 25 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 25 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -132,7 +132,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 50 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 50 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -144,7 +144,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 25 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 25 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -156,7 +156,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 50 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 50 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -168,7 +168,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 25 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 25 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -180,7 +180,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 50 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 50 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -192,7 +192,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 25 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 25 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
@@ -204,7 +204,7 @@ jobs:
         shell: bash
       # Simulate traffic
       - name: Traffic
-        run: timeout 30s siege -c 50 -t 30s http://127.0.0.1:5000/
+        run: timeout 35s siege -c 50 -t 30s http://127.0.0.1:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
