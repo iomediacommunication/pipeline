@@ -56,6 +56,10 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(inputs.manager == 'pnpm' && '**/pnpm-lock.yaml' || '**/yarn.lock') }}
+      # Prevent store to grow over time (not needed with yarn)
+      - if: ${{ inputs.manager == 'pnpm' }}
+        name: Prune store
+        run: ${{ inputs.manager }} prune store
       # Install dependencies
       - name: Install dependencies
         run: ${{ inputs.manager }} install
