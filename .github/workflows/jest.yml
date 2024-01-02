@@ -58,7 +58,7 @@ jobs:
     # Prevent store to grow over time (not needed with yarn)
     - if: ${{ inputs.manager == 'pnpm' }}
       name: Prune store
-      run: ${{ inputs.manager }} prune store
+      run: ${{ inputs.manager }} store prune
     - name: Install dependencies
       run: ${{ inputs.manager }} install
     - name: Playwright
