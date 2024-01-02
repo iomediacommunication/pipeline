@@ -283,3 +283,7 @@ jobs:
       # Flush logs
       - name: Flush logs
         run: pm2 flush
+      # Prevent store to grow over time (not needed with yarn)
+      - if: ${{ inputs.manager == 'pnpm' }}
+        name: Prune store
+        run: ${{ inputs.manager }} store prune
