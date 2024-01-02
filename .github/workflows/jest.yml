@@ -67,3 +67,7 @@ jobs:
       run: ${{ inputs.manager }} test
     - name: Jest Coverage Comment
       uses: MishaKav/jest-coverage-comment@main
+    # Prevent store to grow over time (not needed with yarn)
+    - if: ${{ inputs.manager == 'pnpm' }}
+      name: Prune store
+      run: ${{ inputs.manager }} store prune
