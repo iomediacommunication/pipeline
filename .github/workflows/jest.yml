@@ -59,6 +59,7 @@ jobs:
     - if: ${{ inputs.manager == 'pnpm' }}
       name: Prune store
       run: ${{ inputs.manager }} store prune
+      continue-on-error: true
     - name: Install dependencies
       run: ${{ inputs.manager }} install
     - name: Playwright
@@ -71,3 +72,4 @@ jobs:
     - if: ${{ inputs.manager == 'pnpm' }}
       name: Prune store
       run: ${{ inputs.manager }} store prune
+      continue-on-error: true
