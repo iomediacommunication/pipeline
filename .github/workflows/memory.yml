@@ -60,6 +60,7 @@ jobs:
       - if: ${{ inputs.manager == 'pnpm' }}
         name: Prune store
         run: ${{ inputs.manager }} store prune
+        continue-on-error: true
       # Install dependencies
       - name: Install dependencies
         run: ${{ inputs.manager }} install
@@ -287,3 +288,4 @@ jobs:
       - if: ${{ inputs.manager == 'pnpm' }}
         name: Prune store
         run: ${{ inputs.manager }} store prune
+        continue-on-error: true
