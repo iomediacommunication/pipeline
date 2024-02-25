@@ -69,7 +69,7 @@ jobs:
         run: echo -e "${{ inputs.ENV }}" > .env
       # Build application
       - name: Install dependencies
-        run: ${{ inputs.manager }} build
+        run: NODE_OPTIONS=--openssl-legacy-provider ${{ inputs.manager }} build
       # Start application
       - name: Start application
         run: pm2 start ecosystem.config.js --only nuxt
