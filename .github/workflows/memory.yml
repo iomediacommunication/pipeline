@@ -17,6 +17,11 @@ on:
         type: string
         required: false
         default: "yarn"
+      ecosystem:
+        description: "PM2 ecosystem.config file"
+        type: string
+        required: false
+        default: "ecosystem.config.js"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -72,7 +77,7 @@ jobs:
         run: ${{ inputs.manager }} build
       # Start application
       - name: Start application
-        run: pm2 start ecosystem.config.js --only nuxt
+        run: pm2 start ${{ inputs.ecosystem }} --only nuxt
       # Wait port
       - name: Check HTTP status
         uses: gerdemann/http-status-code@1.0.0
