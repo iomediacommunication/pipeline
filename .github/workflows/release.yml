@@ -17,6 +17,6 @@ jobs:
         with:
           files: 'package.json'
           version-regexp: '\d+.\d+.\d+'
-          repo-token: ${{ secrets.GH_RELEASE_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           author-name: author-name
           author-email: github@iomedia.ch
