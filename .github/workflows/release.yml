@@ -13,10 +13,12 @@ jobs:
     runs-on: ['self-hosted', 'node']
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
       - uses: pocket-apps/action-update-version@v1
         with:
           files: 'package.json'
           version-regexp: '\d+.\d+.\d+'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.GH_RELEASE_TOKEN }}
           author-name: author-name
           author-email: github@iomedia.ch
