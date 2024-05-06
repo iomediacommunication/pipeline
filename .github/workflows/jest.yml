@@ -60,10 +60,6 @@ jobs:
       name: Prune store
       run: ${{ inputs.manager }} store prune
       continue-on-error: true
-    - name: 'ssh agent'
-      uses: webfactory/ssh-agent@v0.4.1
-      with:
-        ssh-private-key: ${{ secrets.GH_CI_PNPM }}
     - name: Install dependencies
       run: ${{ inputs.manager }} install
     - name: Playwright
