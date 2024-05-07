@@ -82,7 +82,7 @@ jobs:
       - name: Check HTTP status
         uses: gerdemann/http-status-code@1.0.0
         with:
-          url: http://127.0.0.1:5000/
+          url: http://localhost:5000/
       # Wait
       - name: Sleep for 30 seconds
         run: sleep 30s
