@@ -46,10 +46,8 @@ jobs:
       with:
         node-version: ${{ matrix.node }}
     - if: ${{ inputs.manager == 'pnpm' }}
-      name: Use package manager
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8.9.2
+      name: Install package manager
+      run: npm install -g pnpm@8.9.2
     - name: Cache node_modules
       uses: actions/cache@v3
       with:
