@@ -49,7 +49,7 @@ jobs:
       name: Use package manager
       uses: pnpm/action-setup@v2
       with:
-        version: 8
+        version: 8.9.2
     - name: Cache node_modules
       uses: actions/cache@v3
       with:
