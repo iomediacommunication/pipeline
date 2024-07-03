@@ -10,51 +10,75 @@ on:
         description: 'tag'
         required: true
         type: string
-      prerelease:
-        description: 'prerelease'
+      username:
+        description: 'git username'
         required: true
-        type: boolean
-        default: false
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+        type: string
+      email:
+        description: 'git email'
+        required: true
+        type: string
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # Release step
   release:
-    name: Build release
-    runs-on: ['self-hosted', 'node']
+    runs-on: ['self-hosted', 'chore']
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_RELEASE_TOKEN }}
+
+      - name: Unshallow checkout
+        run: git fetch --prune --unshallow
+
+      - name: Get current branch
+        id: current_branch
+        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Get previous tag
+        id: previous_tag
+        run: echo "PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
+
+      - name: Download script
+        run: curl -o $PWD/release.cjs https://raw.githubusercontent.com/iomediacommunication/pipeline/main/.github/scripts/release.cjs
+
+      - name: Give script permissions
+        run: chmod +x $PWD/release.cjs
+
       - name: Update version
-        uses: maxgfr/github-change-json@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
-        with:
-          key: 'version'
-          value: '${{ inputs.tag }}'
-          path: package.json
-          commit: true
+        shell: bash
+        run: node scripts/release.cjs v${{ inputs.tag }}
+
+      - name: Remove script
+        run: rm -rf $PWD/release.cjs
+
+      - name: Commit and push changes
+        continue-on-error: true
+        run: |
+          git config --global user.name "${{ inputs.username }}"
+          git config --global user.email "${{ inputs.email }}"
+          git add .
+          git commit -m "chore: bump release version ${{ inputs.tag }}"
+          git push
+
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_RELEASE_TOKEN }}
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+
+      - name: Create release
+        run: gh release create v${{ inputs.tag }} --title v${{ inputs.tag }} --target ${{ env.VERSION }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate CHANGELOG
+        id: changelog
+        uses: requarks/changelog-action@v1
         with:
-          tag_name: 'v${{ inputs.tag }}'
-          release_name: 'v${{ inputs.tag }}'
-          body: |
-            ## Features
-            - feat:
-            ## Fixes
-            - fix:
-            ## Chores
-            - chore:
-          draft: false
-          prerelease: ${{ inputs.prerelease }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fromTag: v${{ inputs.tag }}
+          toTag: ${{ env.PREVIOUS_TAG }}
+          writeToFile: false
+
+      - name: Edit release
+        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog.outputs.changes }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
