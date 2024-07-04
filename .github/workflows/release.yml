@@ -74,7 +74,7 @@ jobs:
           git config --global user.name "${{ inputs.username }}"
           git config --global user.email "${{ inputs.email }}"
           git add .
-          git commit -m "chore: bump release version ${{ inputs.tag }}"
+          git commit -m "ci: bump release version ${{ inputs.tag }}"
           git push
 
       - if: ${{ inputs.monorepo == true }}

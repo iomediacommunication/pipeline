@@ -83,5 +83,5 @@ jobs:
           git config --global user.name "${{ inputs.username }}"
           git config --global user.email "${{ inputs.email }}"
           git add .
-          git commit -m "deps: bump branch version ${{ env.VERSION }}"
+          git commit -m "ci: bump branch version ${{ env.VERSION }}"
           git push
