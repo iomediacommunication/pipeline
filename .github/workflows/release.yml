@@ -87,12 +87,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate CHANGELOG
+      - if: ${{ inputs.monorepo == true }}
+        name: Generate CHANGELOG
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fromTag: v${{ inputs.tag }}
+          toTag: ${{ env.PREVIOUS_TAG }}
+          writeToFile: false
+
+      - if: ${{ inputs.monorepo == false }}
+        name: Generate CHANGELOG
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fromTag: ${{ inputs.tag }}
           toTag: ${{ env.PREVIOUS_TAG }}
           writeToFile: false
 
