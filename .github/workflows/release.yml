@@ -109,7 +109,7 @@ jobs:
 
       - if: ${{ inputs.monorepo == true }}
         name: Edit release
-        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog.outputs.changes }}'
+        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.monorepo_changelog.outputs.changes }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
