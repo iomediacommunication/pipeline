@@ -117,7 +117,7 @@ jobs:
 
       - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'true' }}
         name: Generate monorepo CHANGELOG with fromTag and toTag
-        id: monorepo_changelog
+        id: changelog_monorepo_with_tags
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -127,7 +127,7 @@ jobs:
 
       - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'false' }}
         name: Generate monorepo CHANGELOG with tag
-        id: monorepo_changelog
+        id: changelog_monorepo_with_tag
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -136,7 +136,7 @@ jobs:
 
       - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'true' }}
         name: Generate CHANGELOG with fromTag and toTag
-        id: changelog
+        id: changelog_with_tags
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -146,21 +146,33 @@ jobs:
 
       - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'false' }}
         name: Generate CHANGELOG with tag
-        id: changelog
+        id: changelog_with_tag
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ inputs.tag }}
           writeToFile: false
 
-      - if: ${{ inputs.monorepo == true }}
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'true' }}
         name: Edit release
-        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.monorepo_changelog.outputs.changes }}'
+        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog_monorepo_with_tags.outputs.changes }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: ${{ inputs.monorepo == false }}
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'false' }}
+        name: Edit release
+        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog_monorepo_with_tag.outputs.changes }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'true' }}
         name: Create release
-        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog.outputs.changes }}'
+        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog_with_tags.outputs.changes }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'false' }}
+        name: Create release
+        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog_with_tag.outputs.changes }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
