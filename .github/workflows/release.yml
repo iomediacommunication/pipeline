@@ -46,9 +46,37 @@ jobs:
           BRANCH=$(git branch -r --contains ${{ github.ref_name }} --format "%(refname:lstrip=3)")
           echo "VERSION=$BRANCH" >> $GITHUB_ENV
 
-      - name: Get previous tag
+      - if: ${{ inputs.monorepo == true }}
+        name: Get previous tag
+        id: previous_monorepo_tag
+        run: echo "PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - if: ${{ inputs.monorepo == false }}
+        name: Get previous tag
         id: previous_tag
         run: echo "PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - if: ${{ inputs.monorepo == true }}
+        name: Check if previous_monorepo_tag step succeeded
+        id: check_monorepo_previous_tag
+        run: |
+          if [ "${{ steps.previous_monorepo_tag.outcome }}" == "success" ]; then
+            echo "PREVIOUS_TAG_FOUND=true" >> $GITHUB_ENV
+          else
+            echo "PREVIOUS_TAG_FOUND=false" >> $GITHUB_ENV
+          fi
+
+      - if: ${{ inputs.monorepo == false }}
+        name: Check if previous_tag step succeeded
+        id: check_previous_tag
+        run: |
+          if [ "${{ steps.previous_tag.outcome }}" == "success" ]; then
+            echo "PREVIOUS_TAG_FOUND=true" >> $GITHUB_ENV
+          else
+            echo "PREVIOUS_TAG_FOUND=false" >> $GITHUB_ENV
+          fi
 
       - if: ${{ inputs.monorepo == true }}
         name: Download script
@@ -87,8 +115,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: ${{ inputs.monorepo == true }}
-        name: Generate CHANGELOG
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'true' }}
+        name: Generate monorepo CHANGELOG with fromTag and toTag
         id: monorepo_changelog
         uses: requarks/changelog-action@v1
         with:
@@ -97,14 +125,32 @@ jobs:
           toTag: ${{ env.PREVIOUS_TAG }}
           writeToFile: false
 
-      - if: ${{ inputs.monorepo == false }}
-        name: Generate CHANGELOG
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'false' }}
+        name: Generate monorepo CHANGELOG with tag
+        id: monorepo_changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ inputs.tag }}
+          writeToFile: false
+
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'true' }}
+        name: Generate CHANGELOG with fromTag and toTag
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fromTag: ${{ inputs.tag }}
           toTag: ${{ env.PREVIOUS_TAG }}
+          writeToFile: false
+
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'false' }}
+        name: Generate CHANGELOG with tag
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ inputs.tag }}
           writeToFile: false
 
       - if: ${{ inputs.monorepo == true }}
