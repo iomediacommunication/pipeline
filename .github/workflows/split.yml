@@ -8,8 +8,14 @@ on:
     inputs:
       tag:
         description: 'tag'
-        required: true
+        required: false
         type: string
+        default: ''
+      branch:
+        description: 'branch'
+        required: false
+        type: string
+        default: ''
       packages:
         description: 'packages'
         type: string
@@ -54,7 +60,18 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - uses: danharrin/monorepo-split-github-action@v2.3.0
+      - if: ${{ inputs.branch != '' }}
+        uses: danharrin/monorepo-split-github-action@v2.3.0
+        with:
+          package_directory: packages/${{ matrix.package }}
+          repository_organization: ${{ inputs.organisation }}
+          repository_name: ${{ matrix.package }}
+          user_name: ${{ inputs.username }}
+          user_email: ${{ inputs.email }}
+          branch: ${{ inputs.branch }}
+
+      - if: ${{ inputs.tag != '' }}
+        uses: danharrin/monorepo-split-github-action@v2.3.0
         with:
           package_directory: packages/${{ matrix.package }}
           repository_organization: ${{ inputs.organisation }}

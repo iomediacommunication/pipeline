@@ -18,6 +18,11 @@ on:
         description: 'git email'
         required: true
         type: string
+      monorepo:
+        description: 'is monorepository'
+        required: false
+        type: boolean
+        default: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -31,28 +36,41 @@ jobs:
       - name: Unshallow checkout
         run: git fetch --prune --unshallow
 
-      - name: Get current branch
+      - if: ${{ inputs.monorepo == true }}
+        name: Get current branch
         id: current_branch
         run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - if: ${{ inputs.monorepo == false }}
+        name: Get current branch
+        id: current_branch
+        run: |
+          BRANCH=$(git branch -r --contains ${{ github.ref_name }} --format "%(refname:lstrip=3)")
+          echo "VERSION=$BRANCH" >> $GITHUB_ENV
 
       - name: Get previous tag
         id: previous_tag
         run: echo "PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
 
-      - name: Download script
+      - if: ${{ inputs.monorepo == true }}
+        name: Download script
         run: curl -o $PWD/release.cjs https://raw.githubusercontent.com/iomediacommunication/pipeline/main/.github/scripts/release.cjs
 
-      - name: Give script permissions
+      - if: ${{ inputs.monorepo == true }}
+        name: Give script permissions
         run: chmod +x $PWD/release.cjs
 
-      - name: Update version
+      - if: ${{ inputs.monorepo == true }}
+        name: Update version
         shell: bash
-        run: node scripts/release.cjs v${{ inputs.tag }}
+        run: node $PWD/release.cjs v${{ inputs.tag }}
 
-      - name: Remove script
+      - if: ${{ inputs.monorepo == true }}
+        name: Remove script
         run: rm -rf $PWD/release.cjs
 
-      - name: Commit and push changes
+      - if: ${{ inputs.monorepo == true }}
+        name: Commit and push changes
         continue-on-error: true
         run: |
           git config --global user.name "${{ inputs.username }}"
@@ -61,10 +79,12 @@ jobs:
           git commit -m "chore: bump release version ${{ inputs.tag }}"
           git push
 
-      - name: Checkout code
+      - if: ${{ inputs.monorepo == true }}
+        name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create release
+      - if: ${{ inputs.monorepo == true }}
+        name: Create release
         run: gh release create v${{ inputs.tag }} --title v${{ inputs.tag }} --target ${{ env.VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,7 +98,14 @@ jobs:
           toTag: ${{ env.PREVIOUS_TAG }}
           writeToFile: false
 
-      - name: Edit release
+      - if: ${{ inputs.monorepo == true }}
+        name: Edit release
         run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog.outputs.changes }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: ${{ inputs.monorepo == false }}
+        name: Create release
+        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog.outputs.changes }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
