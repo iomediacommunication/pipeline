@@ -89,7 +89,7 @@ jobs:
 
       - if: ${{ inputs.monorepo == true }}
         name: Generate CHANGELOG
-        id: changelog
+        id: monorepo_changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
