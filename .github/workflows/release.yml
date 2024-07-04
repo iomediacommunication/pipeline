@@ -38,12 +38,10 @@ jobs:
 
       - if: ${{ inputs.monorepo == true }}
         name: Get current branch
-        id: current_branch
         run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - if: ${{ inputs.monorepo == false }}
         name: Get current branch
-        id: current_branch
         run: |
           BRANCH=$(git branch -r --contains ${{ github.ref_name }} --format "%(refname:lstrip=3)")
           echo "VERSION=$BRANCH" >> $GITHUB_ENV
