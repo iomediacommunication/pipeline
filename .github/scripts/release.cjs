@@ -20,7 +20,7 @@ if (branchOrTag.startsWith('v')) {
     version = `${branchOrTag}.0`;
 }
 
-const packagesDir = path.resolve(__dirname, '..', 'packages');
+const packagesDir = path.resolve(__dirname, 'packages');
 
 const updateDependencies = (dependencies) => {
     if (dependencies) {
