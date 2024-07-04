@@ -49,14 +49,26 @@ jobs:
       - if: ${{ inputs.monorepo == true }}
         name: Get previous tag
         id: previous_monorepo_tag
-        run: echo "PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
-        continue-on-error: true
+        run: |
+          PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "NOT_FOUND")
+          if [ "$PREVIOUS_TAG" == "NOT_FOUND" ]; then
+            echo "PREVIOUS_TAG_NOT_FOUND=true" >> $GITHUB_ENV
+          else
+            echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
+            echo "PREVIOUS_TAG_NOT_FOUND=false" >> $GITHUB_ENV
+          fi
 
       - if: ${{ inputs.monorepo == false }}
         name: Get previous tag
         id: previous_tag
-        run: echo "PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))" >> $GITHUB_ENV
-        continue-on-error: true
+        run: |
+          PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1) 2>/dev/null || echo "NOT_FOUND")
+          if [ "$PREVIOUS_TAG" == "NOT_FOUND" ]; then
+            echo "PREVIOUS_TAG_NOT_FOUND=true" >> $GITHUB_ENV
+          else
+            echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
+            echo "PREVIOUS_TAG_NOT_FOUND=false" >> $GITHUB_ENV
+          fi
 
       - if: ${{ inputs.monorepo == true }}
         name: Check if previous_monorepo_tag step succeeded
@@ -115,7 +127,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'true' }}
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_NOT_FOUND == 'false' }}
         name: Generate monorepo CHANGELOG with fromTag and toTag
         id: changelog_monorepo_with_tags
         uses: requarks/changelog-action@v1
@@ -125,7 +137,7 @@ jobs:
           toTag: ${{ env.PREVIOUS_TAG }}
           writeToFile: false
 
-      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'false' }}
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_NOT_FOUND == 'true' }}
         name: Generate monorepo CHANGELOG with tag
         id: changelog_monorepo_with_tag
         uses: requarks/changelog-action@v1
@@ -134,7 +146,7 @@ jobs:
           tag: v${{ inputs.tag }}
           writeToFile: false
 
-      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'true' }}
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_NOT_FOUND == 'false' }}
         name: Generate CHANGELOG with fromTag and toTag
         id: changelog_with_tags
         uses: requarks/changelog-action@v1
@@ -144,7 +156,7 @@ jobs:
           toTag: ${{ env.PREVIOUS_TAG }}
           writeToFile: false
 
-      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'false' }}
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_NOT_FOUND == 'true' }}
         name: Generate CHANGELOG with tag
         id: changelog_with_tag
         uses: requarks/changelog-action@v1
@@ -153,25 +165,25 @@ jobs:
           tag: ${{ inputs.tag }}
           writeToFile: false
 
-      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'true' }}
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_NOT_FOUND == 'false' }}
         name: Edit release
         run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog_monorepo_with_tags.outputs.changes }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_FOUND == 'false' }}
+      - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_NOT_FOUND == 'true' }}
         name: Edit release
         run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog_monorepo_with_tag.outputs.changes }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'true' }}
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_NOT_FOUND == 'false' }}
         name: Create release
         run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog_with_tags.outputs.changes }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_FOUND == 'false' }}
+      - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_NOT_FOUND == 'true' }}
         name: Create release
         run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog_with_tag.outputs.changes }}'
         env:
