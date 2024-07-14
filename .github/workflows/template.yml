@@ -61,11 +61,11 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: pnpm install
+        run: pnpm --ignore-workspace install
 
       - name: Update dependencies
         shell: bash
-        run: pnpm up "${{ inputs.package }}"
+        run: pnpm --ignore-workspace up "${{ inputs.package }}"
 
       - name: Change directory
         shell: bash
