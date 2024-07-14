@@ -54,12 +54,12 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ inputs.working_directory }}
         shell: bash
-        run: pnpm --ignore-workspace install
+        run: pnpm --ignore-workspace install --no-frozen-lockfile
 
       - name: Update dependencies
         working-directory: ${{ inputs.working_directory }}
         shell: bash
-        run: pnpm --ignore-workspace up "${{ inputs.package }}"
+        run: pnpm --ignore-workspace up "${{ inputs.package }}" --no-frozen-lockfile
 
       - name: Get current branch or tag
         id: current_branch
