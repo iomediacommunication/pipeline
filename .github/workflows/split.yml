@@ -33,6 +33,11 @@ on:
         description: 'git email'
         required: true
         type: string
+      path:
+        description: 'packages path'
+        required: false
+        type: string
+        default: 'packages'
 
 env:
   GITHUB_TOKEN: ${{ secrets.GH_COMPOSER_AUTH }}
@@ -63,7 +68,7 @@ jobs:
       - if: ${{ inputs.branch != '' }}
         uses: danharrin/monorepo-split-github-action@v2.3.0
         with:
-          package_directory: packages/${{ matrix.package }}
+          package_directory: ${{ inputs.path }}/${{ matrix.package }}
           repository_organization: ${{ inputs.organisation }}
           repository_name: ${{ matrix.package }}
           user_name: ${{ inputs.username }}
@@ -73,7 +78,7 @@ jobs:
       - if: ${{ inputs.tag != '' }}
         uses: danharrin/monorepo-split-github-action@v2.3.0
         with:
-          package_directory: packages/${{ matrix.package }}
+          package_directory: ${{ inputs.path }}/${{ matrix.package }}
           repository_organization: ${{ inputs.organisation }}
           repository_name: ${{ matrix.package }}
           user_name: ${{ inputs.username }}
