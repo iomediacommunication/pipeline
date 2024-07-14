@@ -56,11 +56,6 @@ jobs:
         shell: bash
         run: pnpm --ignore-workspace install --no-frozen-lockfile --config.confirmModulesPurge=false --ignore-scripts
 
-      - name: Update dependencies
-        working-directory: ${{ inputs.working_directory }}
-        shell: bash
-        run: pnpm --ignore-workspace --no-frozen-lockfile --config.confirmModulesPurge=false --ignore-scripts up "${{ inputs.package }}"
-
       - name: Get current branch or tag
         id: current_branch
         run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
