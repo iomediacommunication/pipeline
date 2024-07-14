@@ -53,7 +53,7 @@ jobs:
 
       - name: Update dependencies
         shell: bash
-        run: pnpm template up ${{ inputs.package }}
+        run: pnpm template up "${{ inputs.package }}"
 
       - name: Get current branch or tag
         id: current_branch
