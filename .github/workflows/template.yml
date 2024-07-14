@@ -16,6 +16,10 @@ on:
         required: false
         type: string
         default: 8.9.2
+      path:
+        description: 'template path'
+        required: true
+        type: string
       package:
         description: 'pnpm package'
         required: true
@@ -47,13 +51,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Get current directory
+        id: current_directory
+        run: echo "CURRENT_DIR=$PWD" >> $GITHUB_ENV
+
+      - name: Change directory
+        shell: bash
+        run: cd ${{ inputs.path }}
+
       - name: Install dependencies
         shell: bash
-        run: pnpm template install
+        run: pnpm install
 
       - name: Update dependencies
         shell: bash
-        run: pnpm template up "${{ inputs.package }}"
+        run: pnpm up "${{ inputs.package }}"
+
+      - name: Change directory
+        shell: bash
+        run: cd ${{ env.CURRENT_DIR }}
 
       - name: Get current branch or tag
         id: current_branch
