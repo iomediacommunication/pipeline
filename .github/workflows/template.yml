@@ -59,7 +59,7 @@ jobs:
       - name: Update dependencies
         working-directory: ${{ inputs.working_directory }}
         shell: bash
-        run: pnpm --ignore-workspace up "${{ inputs.package }}"
+        run: pnpm --ignore-workspace up "${{ inputs.package }}" --no-frozen-lockfile --config.confirmModulesPurge=false --ignore-scripts
 
       - name: Get current branch or tag
         id: current_branch
