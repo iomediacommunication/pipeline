@@ -16,7 +16,7 @@ on:
         required: false
         type: string
         default: 8.9.2
-      path:
+      working_directory:
         description: 'template path'
         required: true
         type: string
@@ -51,25 +51,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Get current directory
-        id: current_directory
-        run: echo "CURRENT_DIR=$PWD" >> $GITHUB_ENV
-
-      - name: Change directory
-        shell: bash
-        run: cd ${{ inputs.path }}
-
       - name: Install dependencies
+        working-directory: ${{ inputs.working_directory }}
         shell: bash
         run: pnpm --ignore-workspace install
 
       - name: Update dependencies
+        working-directory: ${{ inputs.working_directory }}
         shell: bash
         run: pnpm --ignore-workspace up "${{ inputs.package }}"
-
-      - name: Change directory
-        shell: bash
-        run: cd ${{ env.CURRENT_DIR }}
 
       - name: Get current branch or tag
         id: current_branch
