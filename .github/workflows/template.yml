@@ -76,5 +76,5 @@ jobs:
           git config --global user.name "${{ inputs.username }}"
           git config --global user.email "${{ inputs.email }}"
           git add .
-          git commit -m "ci: pnpm update ${{ env.VERSION }}"
+          git commit --no-verify -m "ci: pnpm update ${{ env.VERSION }}"
           git push
