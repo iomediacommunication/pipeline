@@ -38,6 +38,11 @@ on:
         required: false
         type: string
         default: 'packages'
+      rsync_mapping:
+        description: 'rsync mapping files'
+        type: string
+        required: false
+        default: "[]"
 
 env:
   GITHUB_TOKEN: ${{ secrets.GH_COMPOSER_AUTH }}
@@ -64,6 +69,15 @@ jobs:
         uses: webfactory/ssh-agent@v0.4.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Sync files
+        run: |
+          mappings=${{ toJSON(fromJSON(inputs.rsync_mapping)) }}
+          for mapping in $(echo $mappings | jq -c '.[]'); do
+            src=$(echo $mapping | jq -r '.source')
+            dest=$(echo $mapping | jq -r '.destination')
+            rsync -a $src/ $dest/
+          done
 
       - if: ${{ inputs.branch != '' }}
         uses: danharrin/monorepo-split-github-action@v2.3.0
