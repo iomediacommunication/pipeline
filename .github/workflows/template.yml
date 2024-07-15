@@ -72,6 +72,7 @@ jobs:
         name: Commit and push changes
         continue-on-error: true
         run: |
+          git pull
           git config --global user.name "${{ inputs.username }}"
           git config --global user.email "${{ inputs.email }}"
           git add .
