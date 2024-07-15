@@ -75,5 +75,5 @@ jobs:
           git config --global user.name "${{ inputs.username }}"
           git config --global user.email "${{ inputs.email }}"
           git add .
-          git commit -m "ci: update template ${{ inputs.package }} to ${{ env.VERSION }}"
+          git commit -m "ci: pnpm update ${{ env.VERSION }}"
           git push
