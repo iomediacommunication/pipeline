@@ -16,8 +16,9 @@ if (branchOrTag.startsWith('v')) {
     version = branchOrTag.substring(1);
     isTag = true;
 } else {
+    const regex = /^\d+\.\d+$/;
     // It's a branch, assuming format 1.12, transform to 1.12.0
-    version = `${branchOrTag}.0`;
+    version = regex.test(branchOrTag) ? `${branchOrTag}.0` : branchOrTag;
 }
 
 const packagesDir = path.resolve(__dirname, 'packages');
