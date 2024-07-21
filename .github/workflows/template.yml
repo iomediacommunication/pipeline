@@ -61,11 +61,6 @@ jobs:
         shell: bash
         run: pnpm --ignore-workspace --ignore-scripts --latest up "${{ inputs.package }}"
 
-      - name: Update
-        working-directory: ${{ inputs.working_directory }}
-        shell: bash
-        run: pnpm --ignore-workspace --ignore-scripts --latest up "${{ inputs.package }}"
-
       - name: Get current branch
         id: current_branch
         run: echo "VERSION=${{ github.event.pull_request && github.head_ref || github.ref_name }}" >> $GITHUB_ENV
