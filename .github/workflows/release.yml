@@ -38,7 +38,7 @@ jobs:
 
       - if: ${{ inputs.monorepo == true }}
         name: Get current branch
-        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: echo "VERSION=${{ github.event.pull_request && github.head_ref || github.ref_name }}" >> $GITHUB_ENV
 
       - if: ${{ inputs.monorepo == false }}
         name: Get current branch

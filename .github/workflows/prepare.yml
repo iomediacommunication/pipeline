@@ -51,9 +51,9 @@ jobs:
         shell: bash
         run: pnpm unbuild
 
-      - name: Get current branch or tag
+      - name: Get current branch
         id: current_branch
-        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: echo "VERSION=${{ github.event.pull_request && github.head_ref || github.ref_name }}" >> $GITHUB_ENV
 
       - name: Display version
         run: echo ${{ env.VERSION }}

@@ -58,7 +58,7 @@ jobs:
 
       - name: Get current branch
         id: vars
-        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: echo "VERSION=${{ github.event.pull_request && github.head_ref || github.ref_name }}" >> $GITHUB_ENV
 
       - name: Ssh agent
         uses: webfactory/ssh-agent@v0.4.1
