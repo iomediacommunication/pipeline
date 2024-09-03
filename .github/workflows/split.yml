@@ -53,10 +53,16 @@ jobs:
         package: ${{ fromJSON(inputs.packages) }}
 
     steps:
-      - name: Checkout code
+      - if: ${{ inputs.branch != '' }}
+        name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ inputs.branch }}
+          
+      - if: ${{ inputs.tag != '' }}
+        name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Get current branch
         id: vars
