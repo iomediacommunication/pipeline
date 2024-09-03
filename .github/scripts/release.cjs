@@ -10,13 +10,13 @@ if (!branchOrTag) {
 
 let version;
 let isTag = false;
+const regex = /^\d+\.\d+$/;
 
 if (branchOrTag.startsWith('v')) {
     // It's a tag, assuming format v1.12.0
     version = branchOrTag.substring(1);
     isTag = true;
 } else {
-    const regex = /^\d+\.\d+$/;
     // It's a branch, assuming format 1.12, transform to 1.12.0
     version = regex.test(branchOrTag) ? `${branchOrTag}.0` : branchOrTag;
 }
@@ -42,9 +42,11 @@ const updatePackageJson = (dir) => {
     if (fs.existsSync(packageJsonPath)) {
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
-        // Update version
-        packageJson.version = version;
-
+        // Update only for correct version syntax
+        if (regex.test(branchOrTag)) {
+            packageJson.version = version;
+        }
+        
         // Update dependencies and devDependencies
         updateDependencies(packageJson.dependencies);
         updateDependencies(packageJson.devDependencies);
