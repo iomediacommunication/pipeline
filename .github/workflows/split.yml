@@ -38,6 +38,11 @@ on:
         required: false
         type: string
         default: 'packages'
+      ref:
+        description: 'checkout ref'
+        required: false
+        type: string
+        default: ''
 
 env:
   GITHUB_TOKEN: ${{ secrets.GH_COMPOSER_AUTH }}
@@ -53,17 +58,13 @@ jobs:
         package: ${{ fromJSON(inputs.packages) }}
 
     steps:
-      - if: ${{ inputs.branch != '' }}
+      - if: ${{ inputs.ref != '' }}
         name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ inputs.branch }}
+          ref: ${{ inputs.ref }}
           
-      - if: ${{ inputs.tag != '' }}
-        name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Get current branch
         id: vars
         run: echo "VERSION=${{ github.event.pull_request && github.head_ref || github.ref_name }}" >> $GITHUB_ENV
