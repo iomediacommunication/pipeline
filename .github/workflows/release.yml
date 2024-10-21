@@ -50,7 +50,7 @@ jobs:
         name: Get previous tag
         id: previous_monorepo_tag
         run: |
-          PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "NOT_FOUND")
+          PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags="v${{ env.VERSION }}.*" --max-count=1) 2>/dev/null || echo "NOT_FOUND")
           if [ "$PREVIOUS_TAG" == "NOT_FOUND" ]; then
             echo "PREVIOUS_TAG_NOT_FOUND=true" >> $GITHUB_ENV
           else
@@ -62,7 +62,7 @@ jobs:
         name: Get previous tag
         id: previous_tag
         run: |
-          PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1) 2>/dev/null || echo "NOT_FOUND")
+          PREVIOUS_TAG=$(git describe --match "v${{ env.VERSION }}.*" --abbrev=0 --tags $(git rev-list --tags="v${{ env.VERSION }}.*" --skip=1 --max-count=1) 2>/dev/null || echo "NOT_FOUND")
           if [ "$PREVIOUS_TAG" == "NOT_FOUND" ]; then
             echo "PREVIOUS_TAG_NOT_FOUND=true" >> $GITHUB_ENV
           else
