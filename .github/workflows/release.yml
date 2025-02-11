@@ -167,24 +167,24 @@ jobs:
 
       - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_NOT_FOUND == 'false' }}
         name: Edit release
-        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog_monorepo_with_tags.outputs.changes }}'
+        run: gh release edit v${{ inputs.tag }} --notes "${{ steps.changelog_monorepo_with_tags.outputs.changes }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - if: ${{ inputs.monorepo == true && env.PREVIOUS_TAG_NOT_FOUND == 'true' }}
         name: Edit release
-        run: gh release edit v${{ inputs.tag }} --notes '${{ steps.changelog_monorepo_with_tag.outputs.changes }}'
+        run: gh release edit v${{ inputs.tag }} --notes "${{ steps.changelog_monorepo_with_tag.outputs.changes }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_NOT_FOUND == 'false' }}
         name: Create release
-        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog_with_tags.outputs.changes }}'
+        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes "${{ steps.changelog_with_tags.outputs.changes }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - if: ${{ inputs.monorepo == false && env.PREVIOUS_TAG_NOT_FOUND == 'true' }}
         name: Create release
-        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes '${{ steps.changelog_with_tag.outputs.changes }}'
+        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes "${{ steps.changelog_with_tag.outputs.changes }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
