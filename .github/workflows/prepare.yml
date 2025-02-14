@@ -83,5 +83,5 @@ jobs:
           git config --global user.name "${{ inputs.username }}"
           git config --global user.email "${{ inputs.email }}"
           git add .
-          git commit --no-verify -m "ci(deps): sync packages deps to v${{ env.VERSION }}"
+          git commit --no-verify -m "ci(deps): sync packages deps to ${{ env.VERSION }}"
           git push
